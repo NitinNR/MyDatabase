@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Title</title>
+    <script type="text/javascript">
+
+        function sendNotification(){
+
+            $.ajax({
+
+              type: "GET",
+              url: 'senNoty.php',
+              dataType:'text',
+
+              data: {dowork:"senNoty"},
+                success: function (obj, textstatus)
+                    {
+                        console.log(obj);
+                    
+                    },
+
+          });
+
+        }
+        
+    </script>
+</head>
+<body>
+    <script type="text/javascript" src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+
+        if (Notification.permission !== "granted") {
+
+
+            console.log("Notification permission is denied");
+            askPermission();
+             
+
+        }else{
+            console.log("Notification is enabled");
+
+        }
+
+        function askPermission () {
+            Notification.requestPermission().then(function (p){
+                if (p==="granted") {
+                    alert("Granted permission for Notification");
+                }else{
+                    alert("not granted permission for Notification");
+                }
+             });
+
+        }
+        function handlePermission() {
+            return navigator.permissions.query({name:'notifications'}).then(permissionQuery)
+                    .catch(permissionError);
+        }
+
+        function permissionQuery(result) {
+            console.debug({result});
+            var newPrompt;
+
+            if (result.state == 'granted') {
+                // notifications allowed, go wild
+
+            } else if (result.state == 'prompt') {
+                // we can ask the user
+                newPrompt = Notification.requestPermission();
+
+            } else if (result.state == 'denied') {
+                // notifications were disabled
+            }
+
+            result.onchange = () => console.debug({updatedPermission: result});
+
+            return newPrompt || result;
+        }
+
+////
+
+
+    var useragentid = null;
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(["init", {
+        appId: "2d5fd8a9-4340-481e-9431-27b7cea1e773",
+        autoRegister: false,
+        promptOptiones:{
+            actionMessage:"We like to send Notification for live broadcast on youtube",
+            acceptButtonText:"Allow",
+            cancelButtonText:"No Thanks"
+        }
+      }]);
+    //Firstly this will check user id 
+    OneSignal.push(function() {
+        OneSignal.getUserId().then(function(userId) {                
+            if(userId == null){
+                document.getElementById('unsubscribe').style.display = 'none';
+            }
+            else{
+                useragentid = userId;
+                document.getElementById('unsubscribe').style.display = '';
+                document.getElementById('unsubscribe').value = 'Unsubcribe '+useragentid;
+                OneSignal.push(["getNotificationPermission", function(permission){
+                }]);
+                OneSignal.isPushNotificationsEnabled(function(isEnabled) {
+                    if (isEnabled){
+                        document.getElementById('unsubscribe').style.display = '';
+                        document.getElementById('subscribe').style.display = 'none';
+                    }
+                    else{
+                      document.getElementById('unsubscribe').style.display = 'none';
+                      document.getElementById('subscribe').style.display = '';
+                    }
+                });
+            }
+        });
+    });
+    //Secondly this will check when subscription changed
+    OneSignal.push(function() {
+        OneSignal.on('subscriptionChange', function (isSubscribed) {
+
+            if(isSubscribed==true){
+                console.log("Subscribed");
+                OneSignal.sendTag("group","group1", function(tagsSent)
+                    {
+                        // Callback called when tags have finished sending
+                        console.log("Tags have finished sending!");
+                    });
+                OneSignal.getUserId().then(function(userId) {
+                    useragentid = userId;
+                    console.log("useragentid->"+useragentid);
+
+                }).then(function(){
+                 // this is custom function
+                // here you can send post request to php file as well.
+                    //OneSignalUserSubscription(useragentid);
+                });
+               
+                document.getElementById('unsubscribe').style.display = '';
+                document.getElementById('subscribe').style.display = 'none';
+            }else if(isSubscribed==false){
+                console.log("Unsubscribed");
+                OneSignal.getUserId().then(function(userId) {
+                    useragentid = userId;
+                });
+               
+                document.getElementById('unsubscribe').style.display = 'none';
+         
+                document.getElementById('subscribe').style.display = '';
+            }
+            else{
+                console.log('Unable to process the request');
+            }
+        });
+    });
+    function subscribeOneSignal(){
+
+        console.log("useragentid:=>"+useragentid);
+
+        if(useragentid !=null){
+            console.log("subscribing");
+            OneSignal.setSubscription(true); 
+        }
+        else{
+            console.log("modal prompt");
+                OneSignal.registerForPushNotifications({
+                    modalPrompt: true
+                });
+       
+            
+            //askPermission();
+        }
+    }
+    function unSubscribeOneSignal(){
+        
+        OneSignal.setSubscription(false);
+    }
+</script>
+<div id="home-top" class="clearfix">
+<p>OneSingle Testing</p>
+<br>
+<button id="subscribe" class="button" onclick="subscribeOneSignal()">Subscribe </button>
+<button id="unsubscribe" class="button" onclick="unSubscribeOneSignal()">Unsubscribe </button>
+<button onclick="sendNotification()">Send Notification</button>
+</div>
+<style>
+.button {
+    background-color: #008CBA;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;cursor: pointer;
+}
+</style>
+<script src="js/jquery.min.js"></script>
+</body>
+</html>

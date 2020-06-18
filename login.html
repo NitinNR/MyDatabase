@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Login - Bible Bot Panel</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/animate.css">
+    
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/style.css">
+      
+    <script src="https://kit.fontawesome.com/b7b7d528ee.js" crossorigin="anonymous"></script>
+    
+    <script type="text/javascript" src="js/myjs.js"></script>
+    
+    <script type="text/javascript">
+        
+        function checkUserStatus(){
+
+            
+            //alert($("#exampleInputEmail").val());
+
+         $.ajax({
+
+          type: "POST",
+          url: 'checkUser.php',
+          dataType:'text',
+
+          data: {job:"check_status","wnum":$("#exampleInputEmail").val()},
+            success: function (obj, textstatus)
+                {
+                    console.log(obj);
+                    if (obj=="update") {
+                        
+                        
+                        alert("Please Update your data");
+                        window.location.href = "register.php";
+
+                    }
+                    else{
+                        
+                        
+                        alert("Number is not found");
+                    
+                    }
+                },
+
+          });
+
+        }
+
+        function checkFields(){
+            var w_number = $("#exampleInputEmail").val();
+            var passwd = $("#exampleInputPassword").val();
+            if(w_number!="" && passwd != ""){
+                
+                return true;
+            }else
+            {   
+                alert("Fill all fields")
+                return false; 
+            }
+        }
+
+       
+    </script>
+</head>
+
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-12 col-xl-10">
+                <div class="card shadow-lg o-hidden border-0 my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-flex">
+                                <div class="flex-grow-1 bg-login-image" style="background-image: url(&quot;images/b.jpg&quot;);"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h4 class="text-dark mb-4">Welcome Back!</h4>
+                                    </div>
+                                    <form class="user" onsubmit="return checkFields()">
+                                        <div class="form-group">
+                                            <input onfocusout="checkUserStatus()"  class="form-control form-control-user" type="number" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter WhatsApp Number" name="email"></div>
+                                        <div class="form-group">
+                                            <input class="form-control form-control-user" type="password" id="exampleInputPassword" placeholder="Password" name="password"></div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <div class="form-check">
+                                                    <input class="form-check-input custom-control-input" type="checkbox" id="formCheck-1"><label class="form-check-label custom-control-label" for="formCheck-1">Remember Me</label></div>
+                                            </div>
+                                        </div><button class="btn btn-primary btn-block text-white btn-user" type="submit">Login</button>
+<!--
+                                        <hr><a class="btn btn-primary btn-block text-white btn-google btn-user" role="button"><i class="fab fa-google"></i>&nbsp; Login with Google</a><a class="btn btn-primary btn-block text-white btn-facebook btn-user" role="button"><i class="fab fa-facebook-f"></i>&nbsp; Login with Facebook</a>
+                                        <hr>
+-->
+                                    </form>
+                                    <div class="text-center"><a class="small" href="forgot-password.html">Forgot Password?</a></div>
+                                    <div class="text-center"><a class="small" href="register.php">Create an Account!</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+    <script src="js/theme.js"></script>
+    
+</body>
+
+</html>
